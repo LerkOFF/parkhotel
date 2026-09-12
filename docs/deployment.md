@@ -10,6 +10,7 @@
 | Публичный URL | `https://parkhotel.82-39-215-202.nip.io` |
 | Веб-сервер | nginx |
 | PHP | PHP-FPM 8.3 |
+| PHP-модули | `pdo_sqlite`, `sqlite3`, `mbstring` |
 | Данные | `/var/www/parkhotel/var/parkhotel.sqlite` |
 | Секрет админки | bcrypt-хеш вне Git |
 | nginx | `/etc/nginx/sites-available/parkhotel-preview` |
@@ -22,6 +23,8 @@
 
 Временный адрес закрыт от поисковой индексации заголовком `X-Robots-Tag`. Конфигурация находится в `deploy/nginx-preview.conf` и копируется в nginx после клонирования репозитория.
 
+HTTPS выпущен через Certbot для `parkhotel.82-39-215-202.nip.io`. Сертификат автоматически обновляется системным таймером. Certbot дополняет рабочую копию nginx в `/etc/nginx/sites-available/parkhotel-preview`; файл из репозитория остаётся базовой HTTP-конфигурацией для первичного выпуска сертификата.
+
 ## Обновление
 
 ```bash
@@ -33,6 +36,8 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
+При обычном обновлении не копировать `deploy/nginx-preview.conf` поверх рабочего файла nginx: рабочий файл содержит добавленные Certbot настройки HTTPS.
+
 Миграции не требуются: недостающие таблицы SQLite создаются при первом PHP-запросе. Перед изменениями структуры таблиц нужно отдельно сделать резервную копию `var/parkhotel.sqlite`.
 
 ## Проверка
@@ -43,6 +48,7 @@ sudo systemctl reload nginx
 - убедиться, что она появилась в `/admin`;
 - удалить тестовую запись из SQLite после проверки;
 - проверить `nginx` и `php8.3-fpm` в `systemctl`;
+- проверить `certbot.timer` в `systemctl`;
 - проверить журнал `/var/log/nginx/parkhotel.error.log`.
 
 ## Ограничения
