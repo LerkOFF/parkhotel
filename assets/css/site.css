@@ -99,6 +99,13 @@ figcaption { margin-top: 10px; color: var(--muted); font-size: 12px; }
 .back-link { color: var(--accent); font-size: 14px; font-weight: 700; text-underline-offset: 4px; }
 .content-section { display: grid; grid-template-columns: 1fr .65fr; gap: clamp(50px, 9vw, 140px); padding-top: 30px; }
 .content-section > div p { max-width: 700px; color: var(--muted); font-size: 20px; }
+.rich-content { max-width: 760px; color: var(--muted); font-size:20px; }
+.rich-content h2,.rich-content h3 { margin:1.5em 0 .55em; color:var(--text); line-height:1.15; }
+.rich-content h2 { font-size:clamp(30px,3vw,46px); }.rich-content h3 { font-size:clamp(24px,2.2vw,32px); }
+.rich-content p { margin:0 0 1em; }.rich-content ul,.rich-content ol { padding-left:1.35em; }
+.rich-content a { color:var(--accent); text-underline-offset:4px; }
+.rich-content img { margin:28px 0 10px; border-radius:var(--radius); }
+.rich-content figure { margin:30px 0; }.rich-content figcaption { font-size:12px; }
 .content-section aside { padding: 30px; border-radius: var(--radius); background: var(--surface); align-self: start; }
 .content-section aside p { color: var(--muted); }
 

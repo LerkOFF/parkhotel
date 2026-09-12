@@ -11,18 +11,13 @@ if ($path === 'api/request' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         verify_csrf();
         $name = trim((string) ($_POST['name'] ?? ''));
         $phone = trim((string) ($_POST['phone'] ?? ''));
-        $email = trim((string) ($_POST['email'] ?? ''));
-        $message = trim((string) ($_POST['message'] ?? ''));
         $type = trim((string) ($_POST['type'] ?? 'Обратная связь'));
         if (mb_strlen($name) < 2 || mb_strlen($phone) < 6) {
             throw new InvalidArgumentException('Укажите имя и телефон.');
         }
-        if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('Проверьте адрес электронной почты.');
-        }
         $stmt = db()->prepare('INSERT INTO requests (type, name, phone, email, message, created_at) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$type, $name, $phone, $email, $message, date(DATE_ATOM)]);
-        notify_request(compact('type', 'name', 'phone', 'email', 'message'));
+        $stmt->execute([$type, $name, $phone, '', '', date(DATE_ATOM)]);
+        notify_request(compact('type', 'name', 'phone'));
         echo json_encode(['ok' => true, 'message' => 'Заявка принята. Администратор свяжется с вами.'], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
         http_response_code(422);
@@ -47,6 +42,24 @@ if ($path === 'admin/logout') {
     exit;
 }
 
+if ($path === 'admin/upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    try {
+        if (!is_admin()) {
+            http_response_code(401);
+            throw new RuntimeException('Сначала войдите в админку.');
+        }
+        verify_csrf();
+        echo json_encode(['ok' => true] + save_uploaded_file($_FILES['file'] ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    } catch (Throwable $e) {
+        if (http_response_code() < 400) {
+            http_response_code(422);
+        }
+        echo json_encode(['ok' => false, 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}
+
 if (str_starts_with($path, 'admin')) {
     if (!is_admin()) {
         require __DIR__ . '/app/view-admin-login.php';
@@ -60,11 +73,11 @@ if (str_starts_with($path, 'admin')) {
             $stmt->execute([
                 trim((string) $_POST['title']), trim((string) $_POST['description']),
                 trim((string) $_POST['h1']), trim((string) $_POST['intro']),
-                trim((string) $_POST['body']), date(DATE_ATOM), (string) $_POST['slug'],
+                sanitize_content_html((string) $_POST['body']), date(DATE_ATOM), (string) $_POST['slug'],
             ]);
         }
         if (isset($_POST['request_status'])) {
-            $allowed = ['new', 'working', 'done'];
+            $allowed = ['new', 'confirmed', 'cancelled'];
             $status = in_array($_POST['status'] ?? '', $allowed, true) ? $_POST['status'] : 'new';
             $stmt = db()->prepare('UPDATE requests SET status=? WHERE id=?');
             $stmt->execute([$status, (int) $_POST['request_id']]);

@@ -64,7 +64,7 @@ $requestType = match ($slug) {
     </section>
 
     <section class="services section">
-        <div class="section-heading"><h2>Всё для отдыха и событий</h2><p><?= e($page['body']) ?></p></div>
+        <div class="section-heading"><h2>Всё для отдыха и событий</h2><div class="rich-content"><?= sanitize_content_html($page['body']) ?></div></div>
         <div class="service-grid">
             <a class="service-large" href="/nomera/"><img src="/assets/images/room-double.png" alt="Временная визуализация двухместного номера"><span><b>Номера</b>Отдых после дороги и завтрак утром</span></a>
             <a href="/basseyn/"><img src="/assets/images/pool-sauna.png" alt="Временная визуализация бассейна и сауны"><span><b>Бассейн и баня</b>Для гостей отеля и жителей города</span></a>
@@ -82,7 +82,7 @@ $requestType = match ($slug) {
         <div><a class="back-link" href="/">На главную</a><h1><?= e($page['h1']) ?></h1><p><?= e($page['intro']) ?></p></div>
         <figure><img src="<?= $serviceImage ?>" alt="Временная визуализация раздела <?= e($page['h1']) ?>" width="1536" height="1024"><figcaption>Изображение для прототипа. Требуется реальная фотография.</figcaption></figure>
     </section>
-    <section class="content-section section"><div><h2>Главное</h2><p><?= nl2br(e($page['body'])) ?></p></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><a class="button" href="#request">Оставить заявку</a></aside></section>
+    <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= sanitize_content_html($page['body']) ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><a class="button" href="#request">Оставить заявку</a></aside></section>
 <?php endif; ?>
 
     <section class="request-section section" id="request">
@@ -92,8 +92,6 @@ $requestType = match ($slug) {
             <input type="hidden" name="type" value="<?= e($requestType) ?>">
             <label>Ваше имя<input name="name" autocomplete="name" required></label>
             <label>Телефон<input name="phone" type="tel" autocomplete="tel" required></label>
-            <label>Email, если удобно<input name="email" type="email" autocomplete="email"></label>
-            <label class="wide">Комментарий<textarea name="message" rows="3" placeholder="Дата, число гостей или ваш вопрос"></textarea></label>
             <label class="consent wide"><input type="checkbox" required> <span>Согласен на обработку данных для ответа на заявку</span></label>
             <button class="button wide" type="submit">Отправить заявку</button>
             <p class="form-status wide" aria-live="polite"></p>

@@ -5,6 +5,8 @@ session_start();
 
 const ROOT_DIR = __DIR__ . '/..';
 const DB_FILE = ROOT_DIR . '/var/parkhotel.sqlite';
+const UPLOAD_DIR = ROOT_DIR . '/uploads';
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 function env_value(string $key, ?string $default = null): ?string
 {
@@ -47,6 +49,8 @@ function db(): PDO
         status TEXT NOT NULL DEFAULT "new",
         created_at TEXT NOT NULL
     )');
+    $pdo->exec("UPDATE requests SET status = 'confirmed' WHERE status IN ('working', 'done')");
+    $pdo->exec("UPDATE requests SET status = 'cancelled' WHERE status = 'canceled'");
 
     seed_pages($pdo);
     return $pdo;
@@ -132,6 +136,126 @@ function verify_admin_password(string $password): bool
     return hash_equals(env_value('PARKHOTEL_ADMIN_PASSWORD', 'admin123') ?? 'admin123', $password);
 }
 
+function sanitize_content_html(string $html): string
+{
+    $html = trim($html);
+    if ($html === '') {
+        return '';
+    }
+
+    $allowedTags = ['p', 'br', 'h2', 'h3', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'figure', 'figcaption'];
+    $document = new DOMDocument('1.0', 'UTF-8');
+    libxml_use_internal_errors(true);
+    $document->loadHTML('<?xml encoding="UTF-8"><div id="content-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    libxml_clear_errors();
+
+    $root = $document->getElementById('content-root');
+    if (!$root) {
+        return '';
+    }
+
+    $walker = function (DOMNode $node) use (&$walker, $allowedTags): void {
+        foreach (iterator_to_array($node->childNodes) as $child) {
+            if ($child instanceof DOMComment) {
+                $node->removeChild($child);
+                continue;
+            }
+            if (!$child instanceof DOMElement) {
+                continue;
+            }
+
+            $tag = strtolower($child->tagName);
+            if (!in_array($tag, $allowedTags, true)) {
+                if (in_array($tag, ['script', 'style', 'template', 'iframe', 'object', 'embed'], true)) {
+                    $node->removeChild($child);
+                    continue;
+                }
+                while ($child->firstChild) {
+                    $node->insertBefore($child->firstChild, $child);
+                }
+                $node->removeChild($child);
+                continue;
+            }
+
+            foreach (iterator_to_array($child->attributes) as $attribute) {
+                $allowed = ($tag === 'a' && in_array($attribute->name, ['href', 'target', 'rel'], true))
+                    || ($tag === 'img' && in_array($attribute->name, ['src', 'alt'], true));
+                if (!$allowed) {
+                    $child->removeAttribute($attribute->name);
+                }
+            }
+
+            if ($tag === 'a') {
+                $href = trim($child->getAttribute('href'));
+                if (!preg_match('~^(?:https?://|mailto:|tel:|/)~i', $href)) {
+                    $child->removeAttribute('href');
+                }
+                if ($child->getAttribute('target') === '_blank') {
+                    $child->setAttribute('rel', 'noopener noreferrer');
+                } else {
+                    $child->removeAttribute('target');
+                    $child->removeAttribute('rel');
+                }
+            }
+
+            if ($tag === 'img') {
+                $src = trim($child->getAttribute('src'));
+                if (!preg_match('~^(?:https?://|/uploads/)~i', $src)) {
+                    $node->removeChild($child);
+                    continue;
+                }
+            }
+            $walker($child);
+        }
+    };
+    $walker($root);
+
+    $clean = '';
+    foreach ($root->childNodes as $child) {
+        $clean .= $document->saveHTML($child);
+    }
+    return trim($clean);
+}
+
+function save_uploaded_file(array $file): array
+{
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Не удалось загрузить файл.');
+    }
+    if (($file['size'] ?? 0) < 1 || $file['size'] > MAX_UPLOAD_BYTES) {
+        throw new RuntimeException('Размер файла должен быть не больше 10 МБ.');
+    }
+
+    $allowed = [
+        'image/jpeg' => ['jpg', true], 'image/png' => ['png', true],
+        'image/webp' => ['webp', true], 'image/gif' => ['gif', true],
+        'application/pdf' => ['pdf', false],
+        'application/msword' => ['doc', false],
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => ['docx', false],
+        'application/vnd.ms-excel' => ['xls', false],
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => ['xlsx', false],
+    ];
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file((string) $file['tmp_name']);
+    if (!isset($allowed[$mime])) {
+        throw new RuntimeException('Допустимы изображения, PDF, Word и Excel.');
+    }
+
+    if (!is_dir(UPLOAD_DIR) && !mkdir(UPLOAD_DIR, 0775, true) && !is_dir(UPLOAD_DIR)) {
+        throw new RuntimeException('Папка загрузок недоступна.');
+    }
+    [$extension, $isImage] = $allowed[$mime];
+    $filename = date('Ymd') . '-' . bin2hex(random_bytes(12)) . '.' . $extension;
+    if (!move_uploaded_file((string) $file['tmp_name'], UPLOAD_DIR . '/' . $filename)) {
+        throw new RuntimeException('Не удалось сохранить файл.');
+    }
+
+    return [
+        'url' => '/uploads/' . $filename,
+        'name' => trim((string) ($file['name'] ?? '')) ?: $filename,
+        'image' => $isImage,
+    ];
+}
+
 function notify_request(array $request): void
 {
     $email = env_value('PARKHOTEL_NOTIFY_EMAIL');
@@ -140,7 +264,7 @@ function notify_request(array $request): void
     }
 
     $subject = 'Новая заявка: ' . $request['type'];
-    $body = "Имя: {$request['name']}\nТелефон: {$request['phone']}\nEmail: {$request['email']}\nСообщение: {$request['message']}";
+    $body = "Имя: {$request['name']}\nТелефон: {$request['phone']}";
     @mail($email, $subject, $body, 'Content-Type: text/plain; charset=UTF-8');
 }
 

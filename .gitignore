@@ -2,3 +2,5 @@
 /var/*.sqlite-*
 /.env
 .DS_Store
+/uploads/*
+!/uploads/.gitkeep
