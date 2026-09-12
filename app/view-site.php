@@ -6,6 +6,8 @@ $nav = [
 $serviceImage = match ($slug) {
     'nomera' => '/assets/images/room-double.png',
     'basseyn', 'sauna-banya' => '/assets/images/pool-sauna.png',
+    'banketnyy-zal', 'arenda' => '/assets/images/banquet-hall.webp',
+    'slavyanka', 'pominalnye-obedy' => '/assets/images/slavyanka-dining.webp',
     default => '/assets/images/hotel-exterior.png',
 };
 $requestType = match ($slug) {
@@ -68,8 +70,8 @@ $requestType = match ($slug) {
         <div class="service-grid">
             <a class="service-large" href="/nomera/"><img src="/assets/images/room-double.png" alt="Временная визуализация двухместного номера"><span><b>Номера</b>Отдых после дороги и завтрак утром</span></a>
             <a href="/basseyn/"><img src="/assets/images/pool-sauna.png" alt="Временная визуализация бассейна и сауны"><span><b>Бассейн и баня</b>Для гостей отеля и жителей города</span></a>
-            <a class="service-color" href="/banketnyy-zal/"><span><b>Банкетный зал</b>Отдельное пространство до 150 гостей</span></a>
-            <a class="service-line" href="/slavyanka/"><span><b>Столовая «Славянка»</b>Домашняя кухня и зал на 50 мест</span></a>
+            <a href="/banketnyy-zal/"><img src="/assets/images/banquet-hall.webp" alt="Временная визуализация банкетного зала"><span><b>Банкетный зал</b>Отдельное пространство до 150 гостей</span></a>
+            <a href="/slavyanka/"><img src="/assets/images/slavyanka-dining.webp" alt="Временная визуализация столовой Славянка"><span><b>Столовая «Славянка»</b>Домашняя кухня и зал на 50 мест</span></a>
         </div>
     </section>
 
