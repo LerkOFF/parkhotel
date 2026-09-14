@@ -28,6 +28,8 @@ HTTPS выпущен через Certbot для `parkhotel.82-39-215-202.nip.io`.
 
 ## Обновление
 
+Пока WWW на `tabsonru` не готов, правки сайта идут только через Git: коммит в `main`, `git push origin main`, на `max_bot` в `/var/www/parkhotel` — `git pull --ff-only origin main`. Не копировать код SCP/rsync. FTP `lerk` — после появления `www.parkhotelvp.ru` в панели, тем же деревом.
+
 ```bash
 ssh max_bot
 cd /var/www/parkhotel
@@ -54,9 +56,17 @@ sudo systemctl reload nginx
 - проверить `certbot.timer` в `systemctl`;
 - проверить журнал `/var/log/nginx/parkhotel.error.log`.
 
+## Целевой хост заказчика
+
+Панель: `https://ru-ru1-srv-shrd-22.adminvps.net/ispmgr`, пользователь `tabsonru`. FTP только `lerk`, отдельного пользователя не заводить. Нужные IP уже на этом аккаунте: `parkhotelvp.ru` → `5.253.61.98`, `parkhotelvp.online` → `5.253.61.102`. PHP для сайта — LSAPI 8.3.
+
+14 сентября 2026 WWW этих имён создать из `tabsonru` нельзя: зона и сайт уже есть на ноде, править их этот пользователь не может. HTTP даёт 403 и редирект на `blocked.adminvps.net`. leftover-логин `gerbsemi` панель и FTP не принимают. Пока имя не освободят, новый код остаётся на `max_bot`. DNS A-записи не менять.
+
+Когда WWW окажется у `tabsonru`: залить код через FTP `lerk` в `/www/parkhotelvp.ru/`, хеш админки положить в `var/admin_password_hash` (не в Git), включить Let’s Encrypt, проверить HTTPS, `/`, `/nomera/`, `/admin` и форму.
+
 ## Ограничения
 
-- не заменять старые сайты на parkhotelvp.ru и parkhotelvp.online без отдельного запроса;
+- не менять DNS parkhotelvp.ru / parkhotelvp.online, пока WWW не принадлежит `tabsonru`;
 - не хранить пароль или его открытое значение в Git;
 - не включать email, Telegram, MAX и ВК без подтверждённых получателей и ключей;
 - не выдавать старые или постановочные кадры из группы ВК за полный актуальный фотонабор объекта;

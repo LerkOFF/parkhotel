@@ -99,7 +99,7 @@ $requestType = match ($slug) {
             <p><?= e($page['intro']) ?></p>
             <div class="actions"><a class="button" href="#request">Забронировать</a><a class="text-link" href="/nomera/">Посмотреть номера</a></div>
         </div>
-        <figure class="hero-image"><img src="/assets/images/hotel-exterior.webp" alt="Корпус Парк-Отеля на улице Кирова в Вятских Полянах" width="604" height="452" fetchpriority="high"><figcaption>Корпус на ул. Кирова, 2А. Фото из группы ВК.</figcaption></figure>
+        <figure class="hero-image"><img src="/assets/images/hotel-exterior.webp" alt="Корпус Парк-Отеля на улице Кирова в Вятских Полянах" width="604" height="452" fetchpriority="high"><figcaption>Корпус на ул. Кирова, 2А.</figcaption></figure>
     </section>
 
     <section class="facts" aria-label="Преимущества">
@@ -126,7 +126,7 @@ $requestType = match ($slug) {
 <?php else: ?>
     <section class="inner-hero">
         <div><a class="back-link" href="/">На главную</a><h1><?= e($page['h1']) ?></h1><p><?= e($page['intro']) ?></p></div>
-        <figure><img src="<?= $serviceImage ?>" alt="<?= e($serviceAlt) ?>" width="1280" height="960"><figcaption>Фото из группы ВК.</figcaption></figure>
+        <figure><img src="<?= $serviceImage ?>" alt="<?= e($serviceAlt) ?>" width="1280" height="960"></figure>
     </section>
     <?php if ($pageGallery): ?>
     <section class="photo-strip" aria-label="Фотографии раздела">
@@ -155,7 +155,7 @@ $requestType = match ($slug) {
 <footer>
     <div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/images/logo-mark.png" alt="" width="256" height="224"><span>Парк-Отель<small>Вятские Поляны</small></span></a><p>Отдых, здоровье и события рядом с городским парком.</p></div>
     <div><strong>Адрес</strong><p>Кировская область<br>Вятские Поляны, ул. Кирова, 2А</p></div>
-    <div><strong>Связаться</strong><p><a href="tel:+78333461129">+7 (83334) 6-11-29</a><br><a href="mailto:canMol@yandex.ru">canMol@yandex.ru</a></p></div>
+    <div><strong>Связаться</strong><p><a href="tel:+78333461129">+7 (83334) 6-11-29</a><br><a href="mailto:canmol@yandex.ru">canmol@yandex.ru</a></p></div>
     <div><strong>Разделы</strong><p><a href="/o-nas/">О нас</a><br><a href="/arenda/">Аренда</a><br><a href="/ryadom-s-otelem/">Что рядом</a></p></div>
 </footer>
 <script src="/assets/js/site.js" defer></script>
