@@ -41,7 +41,7 @@ button, input, textarea { font: inherit; }
 .site-header { min-height: 72px; max-width: 1440px; margin: 0 auto; padding: 12px clamp(20px, 4vw, 64px); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 36px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 700; line-height: 1.05; white-space: nowrap; }
 .brand small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
-.brand-mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 21px; }
+.brand-mark { width: 44px; height: 44px; padding: 4px; border-radius: 12px; background: #fff; object-fit: contain; }
 .site-header nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 30px); }
 .site-header nav a, .header-phone { text-decoration: none; font-size: 14px; font-weight: 650; white-space: nowrap; }
 .site-header nav a:hover, .header-phone:hover, footer a:hover { color: var(--accent); }
@@ -96,6 +96,10 @@ figcaption { margin-top: 10px; color: var(--muted); font-size: 12px; }
 .inner-hero p { max-width: 520px; color: var(--muted); font-size: 21px; }
 .inner-hero figure { margin: 0; }
 .inner-hero img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
+.photo-strip { max-width: 1312px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.photo-strip figure { margin: 0; }
+.photo-strip img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
+.photo-strip img.photo-doc { aspect-ratio: 3 / 4; object-fit: contain; background: #f4efe4; }
 .back-link { color: var(--accent); font-size: 14px; font-weight: 700; text-underline-offset: 4px; }
 .content-section { display: grid; grid-template-columns: 1fr .65fr; gap: clamp(50px, 9vw, 140px); padding-top: 30px; }
 .content-section > div p { max-width: 700px; color: var(--muted); font-size: 20px; }
@@ -156,6 +160,7 @@ footer a { text-decoration-color: var(--line); text-underline-offset: 4px; }
   .wellness, .request-section, .content-section { grid-template-columns: 1fr; gap: 38px; }
   .inner-hero { min-height: auto; padding: 56px 16px 72px; grid-template-columns: 1fr; }
   .inner-hero h1 { font-size: clamp(44px, 13vw, 62px); }
+  .photo-strip { padding: 0 16px; }
   .request-form { grid-template-columns: 1fr; }
   .request-form label, .request-form .wide { grid-column: 1; }
   footer { padding: 50px 16px; grid-template-columns: 1fr 1fr; gap: 36px 20px; }

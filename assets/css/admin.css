@@ -5,7 +5,7 @@ a { color:inherit; }
 button,input,textarea,select { font:inherit; }
 .login-page { min-height:100dvh; display:grid; place-items:center; padding:20px; }
 .login-card { width:min(420px,100%); padding:40px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); box-shadow:0 24px 70px rgba(24,55,37,.1); display:grid; gap:18px; }
-.admin-logo { display:grid; place-items:center; width:46px; height:46px; border-radius:50%; background:var(--accent); color:#fff; font-weight:700; font-size:21px; }
+.admin-logo { width:46px; height:46px; padding:4px; border-radius:12px; background:#fff; object-fit:contain; border:1px solid var(--line); }
 .login-card h1 { margin:4px 0 -10px; font-size:32px; letter-spacing:-.04em; }
 .login-card p { margin:0; color:var(--muted); }
 .login-card label,.editor label { display:grid; gap:8px; color:var(--muted); font-size:14px; font-weight:650; }

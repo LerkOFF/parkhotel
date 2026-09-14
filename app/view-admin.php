@@ -12,7 +12,7 @@ $statusLabels = ['new' => 'Новая', 'confirmed' => 'Подтверждена
 </head>
 <body class="admin-page">
 <aside class="admin-sidebar">
-    <div class="admin-title"><span class="admin-logo">П</span><b>Парк-Отель</b></div>
+    <div class="admin-title"><img class="admin-logo" src="/assets/images/logo-mark.png" alt="" width="46" height="46"><b>Парк-Отель</b></div>
     <nav>
         <a class="<?= $adminPage === 'requests' ? 'active' : '' ?>" href="/admin">Заявки <span><?= count(array_filter($requests, fn($r) => $r['status'] === 'new')) ?></span></a>
         <p>Страницы</p>
