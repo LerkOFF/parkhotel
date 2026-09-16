@@ -1,4 +1,5 @@
 RewriteEngine On
+RewriteRule ^\.well-known/ - [L]
 RewriteRule ^(app|var|docs)(/|$) - [F,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
