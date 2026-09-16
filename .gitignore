@@ -1,5 +1,6 @@
 /var/*.sqlite
 /var/*.sqlite-*
+/var/admin_password_hash
 /.env
 .DS_Store
 /uploads/*

@@ -123,6 +123,12 @@ function is_admin(): bool
 function verify_admin_password(string $password): bool
 {
     $hashFile = env_value('PARKHOTEL_ADMIN_PASSWORD_HASH_FILE');
+    if (!$hashFile) {
+        $localHash = ROOT_DIR . '/var/admin_password_hash';
+        if (is_readable($localHash)) {
+            $hashFile = $localHash;
+        }
+    }
     if ($hashFile && is_readable($hashFile)) {
         $hash = trim((string) file_get_contents($hashFile));
         return $hash !== '' && password_verify($password, $hash);
