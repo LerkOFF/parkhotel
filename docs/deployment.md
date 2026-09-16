@@ -2,19 +2,11 @@
 
 ## Текущее окружение
 
-| Параметр | Значение |
-| --- | --- |
-| Репозиторий | `git@github.com:LerkOFF/parkhotel.git` |
-| SSH-хост | `max_bot` |
-| Код на VPS | `/var/www/parkhotel` |
-| Публичный URL | `https://parkhotel.82-39-215-202.nip.io` |
-| Веб-сервер | nginx |
-| PHP | PHP-FPM 8.3 |
-| PHP-модули | `pdo_sqlite`, `sqlite3`, `mbstring`, `dom`, `fileinfo` |
-| Данные | `/var/www/parkhotel/var/parkhotel.sqlite` |
-| Загрузки | `/var/www/parkhotel/uploads`, владелец `www-data` |
-| Секрет админки | bcrypt-хеш вне Git |
-| nginx | `/etc/nginx/sites-available/parkhotel-preview` |
+Продакшен: панель `tabsonru`, домены `https://parkhotelvp.ru` и `https://parkhotelvp.online`, PHP 8.3 LSAPI, FTP `lerk`, корень `/www/parkhotelvp.ru/`. IP `5.253.61.98` и `5.253.61.102`. Let’s Encrypt включён, `www` режется на apex, HTTP на HTTPS. Хеш админки: `var/admin_password_hash`.
+
+Превью: `https://parkhotel.82-39-215-202.nip.io` на `max_bot`, код `/var/www/parkhotel`, nginx, PHP-FPM 8.3, хеш `/etc/parkhotel/admin_password_hash`.
+
+Репозиторий: `git@github.com:LerkOFF/parkhotel.git`, ветка `main`.
 
 ## Первичное развёртывание
 
@@ -28,7 +20,7 @@ HTTPS выпущен через Certbot для `parkhotel.82-39-215-202.nip.io`.
 
 ## Обновление
 
-Пока WWW на `tabsonru` не готов, правки сайта идут только через Git: коммит в `main`, `git push origin main`, на `max_bot` в `/var/www/parkhotel` — `git pull --ff-only origin main`. Не копировать код SCP/rsync. FTP `lerk` — после появления `www.parkhotelvp.ru` в панели, тем же деревом.
+Пока код правится в Git: коммит в `main`, `git push origin main`, затем заливка FTP `lerk` в `/www/parkhotelvp.ru/`. Превью на `max_bot` обновляется отдельно: `git pull --ff-only origin main`. Не копировать код SCP/rsync. Не заводить второй FTP.
 
 ```bash
 ssh max_bot
@@ -58,15 +50,13 @@ sudo systemctl reload nginx
 
 ## Целевой хост заказчика
 
-Панель: `https://ru-ru1-srv-shrd-22.adminvps.net/ispmgr`, пользователь `tabsonru`. FTP только `lerk`, отдельного пользователя не заводить. Нужные IP уже на этом аккаунте: `parkhotelvp.ru` → `5.253.61.98`, `parkhotelvp.online` → `5.253.61.102`. PHP для сайта — LSAPI 8.3.
+Панель: `https://ru-ru1-srv-shrd-22.adminvps.net/ispmgr`, пользователь `tabsonru`. FTP только `lerk`. Сайты `parkhotelvp.ru` и `parkhotelvp.online` заведены 16 сентября 2026, оба смотрят в `/www/parkhotelvp.ru/`. PHP LSAPI 8.3. `.htaccess` не должен переписывать `/.well-known/`.
 
-14 сентября 2026 WWW этих имён создать из `tabsonru` нельзя: зона и сайт уже есть на ноде, править их этот пользователь не может. HTTP даёт 403 и редирект на `blocked.adminvps.net`. leftover-логин `gerbsemi` панель и FTP не принимают. Пока имя не освободят, новый код остаётся на `max_bot`. DNS A-записи не менять.
-
-Когда WWW окажется у `tabsonru`: залить код через FTP `lerk` в `/www/parkhotelvp.ru/`, хеш админки положить в `var/admin_password_hash` (не в Git), включить Let’s Encrypt, проверить HTTPS, `/`, `/nomera/`, `/admin` и форму.
+Тикет AdminVPS `#205134`: 15 сентября поддержку написала, что услуга активирована; 16 сентября панель `gerbsemi` снова принимала логин. WWW parkhotelvp сняты с leftover `gerbsemi` и созданы у `tabsonru`. `гербсемьи.рф` на `gerbsemi` не трогать. `hotelvp.ru` не трогать.
 
 ## Ограничения
 
-- не менять DNS parkhotelvp.ru / parkhotelvp.online, пока WWW не принадлежит `tabsonru`;
+- не менять DNS parkhotelvp.ru / parkhotelvp.online на чужой IP;
 - не хранить пароль или его открытое значение в Git;
 - не включать email, Telegram, MAX и ВК без подтверждённых получателей и ключей;
 - не выдавать старые или постановочные кадры из группы ВК за полный актуальный фотонабор объекта;
