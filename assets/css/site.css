@@ -97,6 +97,7 @@ figcaption { margin-top: 10px; color: var(--muted); font-size: 12px; }
 .inner-hero figure { margin: 0; }
 .inner-hero img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
 .photo-strip { max-width: 1312px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.photo-strip.photo-strip-thirds { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .photo-strip figure { margin: 0; }
 .photo-strip img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
 .photo-strip img.photo-doc { aspect-ratio: 3 / 4; object-fit: contain; background: #f4efe4; }

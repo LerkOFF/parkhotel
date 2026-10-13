@@ -5,6 +5,7 @@ $nav = [
 ];
 $serviceImage = match ($slug) {
     'nomera' => '/assets/images/room-double.webp',
+    'nomer-s-detskoy-krovatkoy' => '/assets/images/room-crib.webp',
     'basseyn' => '/assets/images/pool.webp',
     'sauna-banya' => '/assets/images/sauna.webp',
     'banketnyy-zal' => '/assets/images/banquet-hall.webp',
@@ -14,6 +15,7 @@ $serviceImage = match ($slug) {
 };
 $serviceAlt = match ($slug) {
     'nomera' => 'Двухместный номер Парк-Отеля',
+    'nomer-s-detskoy-krovatkoy' => 'Номер с кроватью King Size и детской кроваткой',
     'basseyn' => 'Крытый бассейн Парк-Отеля',
     'sauna-banya' => 'Сауна в банном комплексе',
     'banketnyy-zal' => 'Банкетный зал во время мероприятия',
@@ -24,17 +26,28 @@ $serviceAlt = match ($slug) {
 };
 $pageGallery = match ($slug) {
     'nomera' => [
+        ['/assets/images/room-crib.webp', 'Номер с кроватью King Size и детской кроваткой'],
+        ['/assets/images/room-shower-full.webp', 'Душевая в номере'],
+        ['/assets/images/room-robes.webp', 'Халаты в шкафу номера'],
         ['/assets/images/room-bath.webp', 'Санузел номера'],
-        ['/assets/images/room-shower.webp', 'Душ в номере'],
+        ['/assets/images/room-shower.webp', 'Душ и дозаторы с шампунем и гелем'],
         ['/assets/images/breakfast-menu.webp', 'Завтраки на выбор'],
     ],
+    'nomer-s-detskoy-krovatkoy' => [
+        ['/assets/images/room-robes.webp', 'Халаты в шкафу номера'],
+        ['/assets/images/room-shower-full.webp', 'Душевая в номере'],
+        ['/assets/images/room-bath.webp', 'Санузел номера'],
+    ],
     'basseyn' => [
+        ['/assets/images/pool-ladder.webp', 'Лестница в чашу бассейна'],
         ['/assets/images/pool-hall.webp', 'Чаша крытого бассейна'],
         ['/assets/images/sauna.webp', 'Вход в сауну'],
     ],
     'sauna-banya' => [
         ['/assets/images/banya.webp', 'Комната отдыха банного комплекса'],
-        ['/assets/images/pool.webp', 'Бассейн рядом с баней'],
+        ['/assets/images/banya-broom.webp', 'Веник, шапка и рукавица в парной'],
+        ['/assets/images/sauna-stones.webp', 'Камни в печи парной'],
+        ['/assets/images/banya-tea.webp', 'Горячий вятский квас, травяной чай и баранки'],
     ],
     'banketnyy-zal' => [
         ['/assets/images/banquet-night.webp', 'Банкетный павильон вечером'],
@@ -56,6 +69,7 @@ $pageGallery = match ($slug) {
 };
 $requestType = match ($slug) {
     'nomera' => 'Бронирование номера',
+    'nomer-s-detskoy-krovatkoy' => 'Номер с детской кроваткой',
     'basseyn' => 'Запись в бассейн',
     'sauna-banya' => 'Запись в баню или сауну',
     'banketnyy-zal' => 'Заявка на банкет',
@@ -129,7 +143,7 @@ $requestType = match ($slug) {
         <figure><img src="<?= $serviceImage ?>" alt="<?= e($serviceAlt) ?>" width="1280" height="960"></figure>
     </section>
     <?php if ($pageGallery): ?>
-    <section class="photo-strip" aria-label="Фотографии раздела">
+    <section class="photo-strip<?= count($pageGallery) % 3 === 0 ? ' photo-strip-thirds' : '' ?>" aria-label="Фотографии раздела">
         <?php foreach ($pageGallery as [$src, $alt]): ?>
             <figure><img src="<?= $src ?>" alt="<?= e($alt) ?>" loading="lazy"<?= str_contains($src, 'breakfast') ? ' class="photo-doc"' : '' ?>></figure>
         <?php endforeach; ?>
@@ -156,7 +170,7 @@ $requestType = match ($slug) {
     <div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/images/logo-mark.png" alt="" width="256" height="224"><span>Парк-Отель<small>Вятские Поляны</small></span></a><p>Отдых, здоровье и события рядом с городским парком.</p></div>
     <div><strong>Адрес</strong><p>Кировская область<br>Вятские Поляны, ул. Кирова, 2А</p></div>
     <div><strong>Связаться</strong><p><a href="tel:+78333461129">+7 (83334) 6-11-29</a></p></div>
-    <div><strong>Разделы</strong><p><a href="/o-nas/">О нас</a><br><a href="/arenda/">Аренда</a><br><a href="/ryadom-s-otelem/">Что рядом</a></p></div>
+    <div><strong>Разделы</strong><p><a href="/o-nas/">О нас</a><br><a href="/nomer-s-detskoy-krovatkoy/">Номер с детской кроваткой</a><br><a href="/arenda/">Аренда</a><br><a href="/ryadom-s-otelem/">Что рядом</a></p></div>
 </footer>
 <script src="/assets/js/site.js" defer></script>
 </body>

@@ -123,7 +123,7 @@ if (str_starts_with($path, 'admin')) {
 }
 
 $routeMap = [
-    '' => 'home', 'nomera' => 'nomera', 'basseyn' => 'basseyn', 'sauna-banya' => 'sauna-banya',
+    '' => 'home', 'nomera' => 'nomera', 'nomer-s-detskoy-krovatkoy' => 'nomer-s-detskoy-krovatkoy', 'basseyn' => 'basseyn', 'sauna-banya' => 'sauna-banya',
     'slavyanka' => 'slavyanka', 'pominalnye-obedy' => 'pominalnye-obedy',
     'banketnyy-zal' => 'banketnyy-zal', 'arenda' => 'arenda', 'o-nas' => 'o-nas',
     'ryadom-s-otelem' => 'ryadom-s-otelem', 'kontakty' => 'kontakty',

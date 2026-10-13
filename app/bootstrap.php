@@ -67,13 +67,23 @@ function db(): PDO
     return $pdo;
 }
 
-/** Обновляет страницу номеров до данных заказчика (22 номера, King Size, завтраки), если текст ещё исходный. Правки из админки не затирает. */
+/**
+ * Подтягивает страницу номеров к текущему тексту из app/pages.php, если админ её не правил:
+ * тогда в базе лежит один из прежних исходных текстов (сравнение по sha1). Правки из админки не затирает.
+ */
 function migrate_rooms_content(PDO $pdo): void
 {
-    $initialBody = 'В каждом номере есть всё необходимое для отдыха после дороги или рабочего дня. Актуальные категории, оснащение и цены дополнит администратор.';
+    $previousSeeds = [
+        '885715dab709d4ff31d76558286cd18a54a5add2', // заглушка первого этапа
+        'fe1262991610c67259db925d95247367501f2333', // 13.10.2026: 22 номера, King Size, завтраки
+    ];
     $rooms = pages_seed()['nomera'];
-    $stmt = $pdo->prepare('UPDATE page_content SET title = ?, description = ?, h1 = ?, intro = ?, body = ?, updated_at = ? WHERE slug = ? AND body = ?');
-    $stmt->execute([$rooms['title'], $rooms['description'], $rooms['h1'], $rooms['intro'], $rooms['body'], date(DATE_ATOM), 'nomera', $initialBody]);
+    $current = $pdo->query("SELECT body FROM page_content WHERE slug = 'nomera'")->fetchColumn();
+    if (!is_string($current) || !in_array(sha1($current), $previousSeeds, true)) {
+        return;
+    }
+    $stmt = $pdo->prepare('UPDATE page_content SET title = ?, description = ?, h1 = ?, intro = ?, body = ?, updated_at = ? WHERE slug = ?');
+    $stmt->execute([$rooms['title'], $rooms['description'], $rooms['h1'], $rooms['intro'], $rooms['body'], date(DATE_ATOM), 'nomera']);
 }
 
 function pages_seed(): array
