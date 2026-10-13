@@ -182,7 +182,7 @@ $requestType = match ($slug) {
         <?php endforeach; ?>
     </section>
     <?php endif; ?>
-    <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= sanitize_content_html($page['body']) ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><a class="button" href="#request">Оставить заявку</a></aside></section>
+    <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= sanitize_content_html($page['body']) ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
 <?php endif; ?>
 
 <?php if (!$isDocument): ?>
