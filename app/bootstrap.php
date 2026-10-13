@@ -128,6 +128,13 @@ function e(?string $value): string
     return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function head_icons(): string
+{
+    return '<link rel="icon" href="/favicon.ico" sizes="any">'
+        . '<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">'
+        . '<link rel="apple-touch-icon" href="/apple-touch-icon.png">';
+}
+
 function csrf_token(): string
 {
     if (empty($_SESSION['csrf'])) {

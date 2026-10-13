@@ -85,6 +85,7 @@ $requestType = match ($slug) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($page['title']) ?></title>
     <meta name="description" content="<?= e($page['description']) ?>">
+    <?= head_icons() ?>
     <link rel="stylesheet" href="/assets/css/site.css">
     <script type="application/ld+json"><?= json_encode([
         '@context' => 'https://schema.org', '@type' => 'Hotel', 'name' => 'Парк-Отель',
