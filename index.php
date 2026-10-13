@@ -9,15 +9,23 @@ if ($path === 'api/request' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
     try {
         verify_csrf();
-        $name = trim((string) ($_POST['name'] ?? ''));
-        $phone = trim((string) ($_POST['phone'] ?? ''));
-        $type = trim((string) ($_POST['type'] ?? 'Обратная связь'));
+        $name = mb_substr(trim((string) ($_POST['name'] ?? '')), 0, 120);
+        $phone = mb_substr(trim((string) ($_POST['phone'] ?? '')), 0, 40);
+        $type = mb_substr(trim((string) ($_POST['type'] ?? 'Обратная связь')), 0, 80);
         if (mb_strlen($name) < 2 || mb_strlen($phone) < 6) {
             throw new InvalidArgumentException('Укажите имя и телефон.');
         }
         $stmt = db()->prepare('INSERT INTO requests (type, name, phone, email, message, created_at) VALUES (?, ?, ?, ?, ?, ?)');
         $stmt->execute([$type, $name, $phone, '', '', date(DATE_ATOM)]);
-        notify_request(compact('type', 'name', 'phone'));
+        $requestId = (int) db()->lastInsertId();
+        // Заявка уже сохранена: сбой почты не должен ломать ответ посетителю.
+        try {
+            $notifyStatus = notify_request(compact('type', 'name', 'phone'));
+        } catch (Throwable $mailError) {
+            mail_log('FAIL ' . $mailError->getMessage());
+            $notifyStatus = 'failed';
+        }
+        db()->prepare('UPDATE requests SET notify_status = ? WHERE id = ?')->execute([$notifyStatus, $requestId]);
         echo json_encode(['ok' => true, 'message' => 'Заявка принята. Администратор свяжется с вами.'], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
         http_response_code(422);
@@ -76,13 +84,35 @@ if (str_starts_with($path, 'admin')) {
                 sanitize_content_html((string) $_POST['body']), date(DATE_ATOM), (string) $_POST['slug'],
             ]);
         }
+        $flash = [];
+        if (isset($_POST['save_settings'])) {
+            $raw = trim((string) ($_POST['notify_email'] ?? ''));
+            [$valid, $invalid] = parse_email_list($raw);
+            if ($invalid) {
+                $flash = ['mail' => 'badaddr'];
+            } else {
+                setting_set('notify_email', implode(', ', $valid));
+            }
+        }
+        if (isset($_POST['send_test_mail'])) {
+            $emails = notify_emails();
+            if (!$emails) {
+                $flash = ['mail' => 'noaddr'];
+            } else {
+                $ok = 0;
+                foreach ($emails as $email) {
+                    $ok += send_mail($email, 'Проверка почты сайта Парк-Отеля', "Это тестовое письмо из админки parkhotelvp.ru.\nЕсли вы его читаете, заявки с сайта будут приходить на этот адрес.\n\nВремя: " . date('d.m.Y H:i') . "\n") ? 1 : 0;
+                }
+                $flash = ['mail' => $ok > 0 ? 'testok' : 'testfail'];
+            }
+        }
         if (isset($_POST['request_status'])) {
             $allowed = ['new', 'confirmed', 'cancelled'];
             $status = in_array($_POST['status'] ?? '', $allowed, true) ? $_POST['status'] : 'new';
             $stmt = db()->prepare('UPDATE requests SET status=? WHERE id=?');
             $stmt->execute([$status, (int) $_POST['request_id']]);
         }
-        header('Location: /admin?' . http_build_query(['page' => $_GET['page'] ?? 'requests', 'saved' => 1]));
+        header('Location: /admin?' . http_build_query(['page' => $_GET['page'] ?? 'requests'] + ($flash ?: ['saved' => 1])));
         exit;
     }
 

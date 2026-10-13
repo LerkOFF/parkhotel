@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 session_start();
+date_default_timezone_set('Europe/Moscow');
 
 const ROOT_DIR = __DIR__ . '/..';
 const DB_FILE = ROOT_DIR . '/var/parkhotel.sqlite';
@@ -49,6 +50,15 @@ function db(): PDO
         status TEXT NOT NULL DEFAULT "new",
         created_at TEXT NOT NULL
     )');
+    $pdo->exec('CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    )');
+    $requestColumns = array_column($pdo->query('PRAGMA table_info(requests)')->fetchAll(), 'name');
+    if (!in_array('notify_status', $requestColumns, true)) {
+        $pdo->exec('ALTER TABLE requests ADD COLUMN notify_status TEXT NOT NULL DEFAULT ""');
+    }
     $pdo->exec("UPDATE requests SET status = 'confirmed' WHERE status IN ('working', 'done')");
     $pdo->exec("UPDATE requests SET status = 'cancelled' WHERE status = 'canceled'");
 
@@ -262,16 +272,102 @@ function save_uploaded_file(array $file): array
     ];
 }
 
-function notify_request(array $request): void
+function setting_get(string $key, string $default = ''): string
 {
-    $email = env_value('PARKHOTEL_NOTIFY_EMAIL');
-    if (!$email) {
-        return;
+    $stmt = db()->prepare('SELECT value FROM settings WHERE key = ?');
+    $stmt->execute([$key]);
+    $value = $stmt->fetchColumn();
+    return $value === false ? $default : (string) $value;
+}
+
+function setting_set(string $key, string $value): void
+{
+    $stmt = db()->prepare('INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at');
+    $stmt->execute([$key, $value, date(DATE_ATOM)]);
+}
+
+/** Разбирает строку адресов через запятую или точку с запятой. Возвращает [корректные, некорректные]. */
+function parse_email_list(string $raw): array
+{
+    $valid = [];
+    $invalid = [];
+    foreach (preg_split('~[\s,;]+~u', $raw, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $item) {
+        if (filter_var($item, FILTER_VALIDATE_EMAIL)) {
+            $valid[strtolower($item)] ??= $item;
+        } else {
+            $invalid[] = $item;
+        }
+    }
+    return [array_values($valid), $invalid];
+}
+
+/** Адреса получателей заявок: настройка из админки, иначе переменная окружения. */
+function notify_emails(): array
+{
+    $raw = setting_get('notify_email');
+    if (trim($raw) === '') {
+        $raw = (string) env_value('PARKHOTEL_NOTIFY_EMAIL', '');
+    }
+    return parse_email_list($raw)[0];
+}
+
+function mail_from_address(): string
+{
+    return env_value('PARKHOTEL_MAIL_FROM') ?: 'noreply@parkhotelvp.ru';
+}
+
+function mail_log(string $line): void
+{
+    $file = ROOT_DIR . '/var/mail.log';
+    @file_put_contents($file, date(DATE_ATOM) . ' ' . $line . "\n", FILE_APPEND | LOCK_EX);
+}
+
+/** Отправляет текстовое письмо через mail(). Возвращает true, если почтовая служба хоста приняла письмо. */
+function send_mail(string $to, string $subject, string $body): bool
+{
+    $from = mail_from_address();
+    $fromHeader = '=?UTF-8?B?' . base64_encode('Парк-Отель') . '?= <' . $from . '>';
+    $headers = [
+        'From: ' . $fromHeader,
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . substr(strrchr($from, '@'), 1) . '>',
+        'X-Auto-Response-Suppress: All',
+    ];
+    $encodedSubject = '=?UTF-8?B?' . base64_encode(preg_replace('~[\r\n]+~', ' ', $subject)) . '?=';
+    $message = chunk_split(base64_encode($body));
+
+    $sent = @mail($to, $encodedSubject, $message, implode("\r\n", $headers), '-f' . $from);
+    if (!$sent) {
+        $sent = @mail($to, $encodedSubject, $message, implode("\r\n", $headers));
+    }
+    mail_log(($sent ? 'ok   ' : 'FAIL ') . $to . ' | ' . $subject);
+    return $sent;
+}
+
+/** Рассылает заявку получателям. Возвращает статус для списка заявок: sent, failed или none (адрес не задан). */
+function notify_request(array $request): string
+{
+    $emails = notify_emails();
+    if (!$emails) {
+        mail_log('skip  адрес получателя заявок не задан | ' . $request['type']);
+        return 'none';
     }
 
     $subject = 'Новая заявка: ' . $request['type'];
-    $body = "Имя: {$request['name']}\nТелефон: {$request['phone']}";
-    @mail($email, $subject, $body, 'Content-Type: text/plain; charset=UTF-8');
+    $body = "Новая заявка с сайта parkhotelvp.ru\n\n"
+        . "Раздел: {$request['type']}\n"
+        . "Имя: {$request['name']}\n"
+        . "Телефон: {$request['phone']}\n"
+        . 'Время: ' . date('d.m.Y H:i') . "\n\n"
+        . "Все заявки и статусы: https://parkhotelvp.ru/admin\n";
+
+    $sent = 0;
+    foreach ($emails as $email) {
+        $sent += send_mail($email, $subject, $body) ? 1 : 0;
+    }
+    return $sent > 0 ? 'sent' : 'failed';
 }
 
 db();

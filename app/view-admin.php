@@ -1,6 +1,14 @@
 <?php
-$editing = $adminPage !== 'requests' ? page_by_slug($adminPage) : null;
+$isSettings = $adminPage === 'settings';
+$editing = !in_array($adminPage, ['requests', 'settings'], true) ? page_by_slug($adminPage) : null;
 $statusLabels = ['new' => 'Новая', 'confirmed' => 'Подтверждена', 'cancelled' => 'Отменена'];
+$notifyLabels = ['sent' => 'Письмо отправлено', 'failed' => 'Письмо не отправилось', 'none' => 'Адрес для писем не задан'];
+$mailMessages = [
+    'testok' => ['ok', 'Тестовое письмо передано почтовой службе. Проверьте ящик, а если там пусто, то и папку «Спам».'],
+    'testfail' => ['error', 'Почтовая служба хостинга не приняла письмо. Подробности в var/mail.log на сервере.'],
+    'noaddr' => ['error', 'Сначала укажите адрес и сохраните.'],
+    'badaddr' => ['error', 'В адресе ошибка, настройки не сохранены. Проверьте написание.'],
+];
 ?>
 <!doctype html>
 <html lang="ru">
@@ -15,6 +23,7 @@ $statusLabels = ['new' => 'Новая', 'confirmed' => 'Подтверждена
     <div class="admin-title"><img class="admin-logo" src="/assets/images/logo-mark.png" alt="" width="46" height="46"><b>Парк-Отель</b></div>
     <nav>
         <a class="<?= $adminPage === 'requests' ? 'active' : '' ?>" href="/admin">Заявки <span><?= count(array_filter($requests, fn($r) => $r['status'] === 'new')) ?></span></a>
+        <a class="<?= $isSettings ? 'active' : '' ?>" href="/admin?page=settings">Настройки</a>
         <p>Страницы</p>
         <?php foreach (all_pages() as $item): ?>
             <a class="<?= $adminPage === $item['slug'] ? 'active' : '' ?>" href="/admin?page=<?= e($item['slug']) ?>"><?= e($item['h1']) ?></a>
@@ -24,7 +33,22 @@ $statusLabels = ['new' => 'Новая', 'confirmed' => 'Подтверждена
 </aside>
 <main class="admin-main">
     <?php if (isset($_GET['saved'])): ?><div class="saved">Изменения сохранены</div><?php endif; ?>
-    <?php if ($editing): ?>
+    <?php if (isset($mailMessages[$_GET['mail'] ?? ''])): [$mailClass, $mailText] = $mailMessages[$_GET['mail']]; ?><div class="saved <?= $mailClass ?>"><?= e($mailText) ?></div><?php endif; ?>
+    <?php if ($isSettings): ?>
+        <div class="admin-heading"><div><p>Параметры сайта</p><h1>Настройки</h1></div></div>
+        <form class="editor" method="post">
+            <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+            <label>Куда присылать заявки
+                <input name="notify_email" type="text" inputmode="email" autocomplete="off" placeholder="name@yandex.ru" value="<?= e(implode(', ', notify_emails())) ?>">
+            </label>
+            <p class="editor-hint">Новая заявка с сайта придёт письмом на этот адрес. Можно указать несколько адресов через запятую. Пустое поле выключает письма, заявки останутся в разделе «Заявки».</p>
+            <div class="settings-actions">
+                <button name="save_settings" value="1">Сохранить</button>
+                <button class="secondary" name="send_test_mail" value="1" formnovalidate>Отправить тестовое письмо</button>
+            </div>
+            <p class="editor-hint">Тестовое письмо уходит на уже сохранённый адрес. Сначала нажмите «Сохранить», потом проверку.</p>
+        </form>
+    <?php elseif ($editing): ?>
         <div class="admin-heading">
             <div><p>Редактирование страницы</p><h1><?= e($editing['h1']) ?></h1></div>
             <a href="<?= $editing['slug'] === 'home' ? '/' : '/' . $editing['slug'] . '/' ?>" target="_blank">Открыть страницу</a>
@@ -65,6 +89,7 @@ $statusLabels = ['new' => 'Новая', 'confirmed' => 'Подтверждена
                 <?php foreach ($requests as $request): ?>
                     <article>
                         <header><div><span class="status status-<?= e($request['status']) ?>"><?= e($statusLabels[$request['status']] ?? 'Новая') ?></span><h2><?= e($request['type']) ?></h2></div><time><?= e(date('d.m.Y H:i', strtotime($request['created_at']))) ?></time></header>
+                        <?php if (!empty($request['notify_status'])): ?><p class="notify notify-<?= e($request['notify_status']) ?>"><?= e($notifyLabels[$request['notify_status']] ?? '') ?></p><?php endif; ?>
                         <dl><div><dt>Имя</dt><dd><?= e($request['name']) ?></dd></div><div><dt>Телефон</dt><dd><a href="tel:<?= e($request['phone']) ?>"><?= e($request['phone']) ?></a></dd></div></dl>
                         <form method="post">
                             <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
