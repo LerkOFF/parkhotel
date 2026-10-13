@@ -94,6 +94,7 @@ $requestType = match ($slug) {
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>
 </head>
 <body>
+<div class="topbar"><div class="topbar-inner"><span>Вятские Поляны, ул. Кирова, 2А</span><a href="mailto:ParkHotelVP@yandex.ru">ParkHotelVP@yandex.ru</a></div></div>
 <header class="site-header">
     <a class="brand" href="/" aria-label="Парк-Отель, главная">
         <img class="brand-mark" src="/assets/images/logo-mark.png" alt="" width="256" height="224"><span>Парк-Отель<small>Вятские Поляны</small></span>

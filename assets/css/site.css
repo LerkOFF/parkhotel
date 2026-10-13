@@ -38,6 +38,11 @@ a { color: inherit; }
 img { display: block; width: 100%; height: auto; }
 button, input, textarea { font: inherit; }
 
+.topbar { background: var(--surface); border-bottom: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.4; }
+.topbar-inner { max-width: 1440px; margin: 0 auto; padding: 7px clamp(20px, 4vw, 64px); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 24px; }
+.topbar a { text-decoration-color: var(--line); text-underline-offset: 3px; }
+.topbar a:hover { color: var(--accent); }
+
 .site-header { min-height: 72px; max-width: 1440px; margin: 0 auto; padding: 12px clamp(20px, 4vw, 64px); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 36px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 700; line-height: 1.05; white-space: nowrap; }
 .brand small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
@@ -141,6 +146,7 @@ footer a { text-decoration-color: var(--line); text-underline-offset: 4px; }
 
 @media (max-width: 767px) {
   body { font-size: 16px; }
+  .topbar-inner { padding: 6px 16px; }
   .site-header { position: relative; min-height: 64px; padding: 10px 16px; grid-template-columns: 1fr auto; }
   .brand-mark { width: 40px; height: 40px; }
   .menu-button { display: block; padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--text); }
