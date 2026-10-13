@@ -3,6 +3,8 @@ $nav = [
     '/nomera/' => 'Номера', '/basseyn/' => 'Бассейн', '/sauna-banya/' => 'Баня',
     '/slavyanka/' => 'Славянка', '/banketnyy-zal/' => 'Банкеты', '/kontakty/' => 'Контакты',
 ];
+$documentSlugs = ['politika-konfidencialnosti', 'soglasie-na-obrabotku-pd', 'politika-cookie'];
+$isDocument = in_array($slug, $documentSlugs, true);
 $serviceImage = match ($slug) {
     'nomera' => '/assets/images/room-double.webp',
     'nomer-s-detskoy-krovatkoy' => '/assets/images/room-crib.webp',
@@ -139,6 +141,35 @@ $requestType = match ($slug) {
         <div><h2>Восстановить силы</h2><p>Поплавайте, прогрейтесь в сауне или забронируйте русскую баню.</p><a class="text-link" href="/basseyn/">Узнать о бассейне</a></div>
         <img src="/assets/images/banya.webp" alt="Комната отдыха банного комплекса" loading="lazy">
     </section>
+
+    <section class="seo-text section" aria-labelledby="seo-title">
+        <h2 id="seo-title">Гостиница в Вятских Полянах: Парк-Отель</h2>
+        <div class="seo-columns">
+            <div>
+                <h3>Где остановиться в Вятских Полянах</h3>
+                <p>Парк-Отель — гостиница в центре Вятских Полян, на улице Кирова, 2А. Она стоит рядом с городским парком, на территории «Вятской здравницы», на месте бывшего профилактория «Молот». Сюда приезжают в командировку, на выходные, всей семьёй и по случаю: на свадьбу, юбилей или поминальный обед. Жители города приходят в бассейн, баню и сауну.</p>
+                <h3>Номера с завтраком</h3>
+                <p>В отеле 22 номера, и все после нового ремонта. В двухместном номере двуспальная кровать King Size, телевизор, кондиционер, холодильник, Wi-Fi, душевая и отдельный санузел с феном. Гостей ждут халат, тапочки, полотенца и косметические принадлежности, а на этаже стоит кулер с питьевой водой. В стоимость проживания входят завтрак на выбор (каша, яичница или блинчики) и посещение бассейна. Если вы едете с малышом, <a href="/nomer-s-detskoy-krovatkoy/">номер с детской кроваткой</a> можно запросить при бронировании: кроватка у нас одна, поэтому лучше уточнить заранее. Подробнее о <a href="/nomera/">номерах и завтраках</a>.</p>
+                <h3>Бассейн, баня и сауна</h3>
+                <p>В комплексе есть крытый <a href="/basseyn/">бассейн</a>, сауна и русская <a href="/sauna-banya/">баня</a>. Они открыты не только для постояльцев, но и для жителей Вятских Полян. Баню и сауну лучше записывать заранее: оставьте заявку, и администратор подберёт свободное время для вашей компании.</p>
+            </div>
+            <div>
+                <h3>Столовая и банкетный зал</h3>
+                <p>В столовой <a href="/slavyanka/">«Славянка»</a> готовят домашнюю русскую кухню: завтраки для гостей отеля, обеды и блюда для мероприятий. Зал рассчитан на 50 человек. Для больших событий есть <a href="/banketnyy-zal/">банкетный зал на 150 гостей</a>: свадьбы, юбилеи, корпоративы. Отдельно организуем <a href="/pominalnye-obedy/">поминальные обеды</a>: администратор поможет с меню, числом гостей и подготовкой зала.</p>
+                <h3>Парковка и аренда помещений</h3>
+                <p>У отеля есть парковка для гостей. Кабинеты, залы и другие помещения комплекса можно взять в <a href="/arenda/">аренду</a> для работы или мероприятия. Что находится рядом с отелем, читайте на странице <a href="/ryadom-s-otelem/">«Что рядом»</a>.</p>
+                <h3>Как забронировать</h3>
+                <p>Оставьте имя и телефон в <a href="#request">форме заявки</a> или позвоните по номеру <a href="tel:+78333461129">+7 (83334) 6-11-29</a>. Администратор уточнит даты, ответит на вопросы и подтвердит бронь. Адрес и другие контакты на странице <a href="/kontakty/">«Контакты»</a>.</p>
+            </div>
+        </div>
+    </section>
+<?php elseif ($isDocument): ?>
+    <article class="document">
+        <a class="back-link" href="/">На главную</a>
+        <h1><?= e($page['h1']) ?></h1>
+        <p class="document-date"><?= e($page['intro']) ?></p>
+        <div class="rich-content"><?= sanitize_content_html($page['body']) ?></div>
+    </article>
 <?php else: ?>
     <section class="inner-hero">
         <div><a class="back-link" href="/">На главную</a><h1><?= e($page['h1']) ?></h1><p><?= e($page['intro']) ?></p></div>
@@ -154,6 +185,7 @@ $requestType = match ($slug) {
     <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= sanitize_content_html($page['body']) ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><a class="button" href="#request">Оставить заявку</a></aside></section>
 <?php endif; ?>
 
+<?php if (!$isDocument): ?>
     <section class="request-section section" id="request">
         <div><h2>Уточнить свободное время</h2><p>Оставьте контакты. Администратор свяжется с вами и ответит на вопросы.</p></div>
         <form class="request-form" action="/api/request" method="post" novalidate>
@@ -161,19 +193,27 @@ $requestType = match ($slug) {
             <input type="hidden" name="type" value="<?= e($requestType) ?>">
             <label>Ваше имя<input name="name" autocomplete="name" required></label>
             <label>Телефон<input name="phone" type="tel" autocomplete="tel" required></label>
-            <label class="consent wide"><input type="checkbox" required> <span>Согласен на обработку данных для ответа на заявку</span></label>
+            <label class="consent wide"><input type="checkbox" required> <span>Согласен на <a href="/soglasie-na-obrabotku-pd/" target="_blank" rel="noopener">обработку персональных данных</a> на условиях <a href="/politika-konfidencialnosti/" target="_blank" rel="noopener">политики</a></span></label>
             <button class="button wide" type="submit">Отправить заявку</button>
             <p class="form-status wide" aria-live="polite"></p>
         </form>
     </section>
+<?php endif; ?>
 </main>
 
 <footer>
     <div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/images/logo-mark.png" alt="" width="256" height="224"><span>Парк-Отель<small>Вятские Поляны</small></span></a><p>Отдых, здоровье и события рядом с городским парком.</p></div>
-    <div><strong>Адрес</strong><p>Кировская область<br>Вятские Поляны, ул. Кирова, 2А</p></div>
-    <div><strong>Связаться</strong><p><a href="tel:+78333461129">+7 (83334) 6-11-29</a></p></div>
-    <div><strong>Разделы</strong><p><a href="/o-nas/">О нас</a><br><a href="/nomer-s-detskoy-krovatkoy/">Номер с детской кроваткой</a><br><a href="/arenda/">Аренда</a><br><a href="/ryadom-s-otelem/">Что рядом</a></p></div>
+    <div><strong>Контакты</strong><p>Кировская область<br>Вятские Поляны, ул. Кирова, 2А<br><a href="tel:+78333461129">+7 (83334) 6-11-29</a><br><a href="mailto:ParkHotelVP@yandex.ru">ParkHotelVP@yandex.ru</a></p></div>
+    <div class="footer-menu"><strong>Разделы</strong><p><a href="/nomera/">Номера</a><br><a href="/nomer-s-detskoy-krovatkoy/">Номер с детской кроваткой</a><br><a href="/basseyn/">Бассейн</a><br><a href="/sauna-banya/">Баня и сауна</a><br><a href="/slavyanka/">Славянка</a><br><a href="/banketnyy-zal/">Банкетный зал</a><br><a href="/pominalnye-obedy/">Поминальные обеды</a><br><a href="/arenda/">Аренда</a><br><a href="/o-nas/">О нас</a><br><a href="/ryadom-s-otelem/">Что рядом</a><br><a href="/kontakty/">Контакты</a></p></div>
+    <div class="footer-legal">
+        <p>ООО «Санаторий-профилакторий «Вятская здравница», ИНН 4307018485, ОГРН 1154307000320</p>
+        <p><a href="/politika-konfidencialnosti/">Политика обработки персональных данных</a> · <a href="/soglasie-na-obrabotku-pd/">Согласие на обработку данных</a> · <a href="/politika-cookie/">Файлы cookie</a></p>
+    </div>
 </footer>
+<div class="cookie-banner" role="region" aria-label="Файлы cookie" hidden>
+    <p>Сайт использует файлы cookie, чтобы работали формы заявок. Рекламу и аналитику мы не подключаем. <a href="/politika-cookie/">Подробнее</a></p>
+    <button type="button" class="button cookie-ok">Понятно</button>
+</div>
 <script src="/assets/js/site.js" defer></script>
 </body>
 </html>

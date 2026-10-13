@@ -33,3 +33,15 @@ document.querySelectorAll('.request-form').forEach((form) => {
     }
   });
 });
+
+const cookieBanner = document.querySelector('.cookie-banner');
+const cookieKey = 'parkhotel_cookie_notice';
+let cookieSeen = false;
+try { cookieSeen = localStorage.getItem(cookieKey) === '1'; } catch (error) { cookieSeen = false; }
+if (cookieBanner && !cookieSeen) {
+  cookieBanner.hidden = false;
+  cookieBanner.querySelector('.cookie-ok')?.addEventListener('click', () => {
+    cookieBanner.hidden = true;
+    try { localStorage.setItem(cookieKey, '1'); } catch (error) { /* без хранилища плашка покажется снова */ }
+  });
+}

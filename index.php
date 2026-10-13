@@ -127,6 +127,7 @@ $routeMap = [
     'slavyanka' => 'slavyanka', 'pominalnye-obedy' => 'pominalnye-obedy',
     'banketnyy-zal' => 'banketnyy-zal', 'arenda' => 'arenda', 'o-nas' => 'o-nas',
     'ryadom-s-otelem' => 'ryadom-s-otelem', 'kontakty' => 'kontakty',
+    'politika-konfidencialnosti' => 'politika-konfidencialnosti', 'soglasie-na-obrabotku-pd' => 'soglasie-na-obrabotku-pd', 'politika-cookie' => 'politika-cookie',
 ];
 
 if (!array_key_exists($path, $routeMap)) {

@@ -63,27 +63,40 @@ function db(): PDO
     $pdo->exec("UPDATE requests SET status = 'cancelled' WHERE status = 'canceled'");
 
     seed_pages($pdo);
-    migrate_rooms_content($pdo);
+    migrate_seed_content($pdo);
     return $pdo;
 }
 
 /**
- * Подтягивает страницу номеров к текущему тексту из app/pages.php, если админ её не правил:
+ * Подтягивает страницы к текущему тексту из app/pages.php, если админ их не правил:
  * тогда в базе лежит один из прежних исходных текстов (сравнение по sha1). Правки из админки не затирает.
  */
-function migrate_rooms_content(PDO $pdo): void
+function migrate_seed_content(PDO $pdo): void
 {
     $previousSeeds = [
-        '885715dab709d4ff31d76558286cd18a54a5add2', // заглушка первого этапа
-        'fe1262991610c67259db925d95247367501f2333', // 13.10.2026: 22 номера, King Size, завтраки
+        'nomera' => [
+            '885715dab709d4ff31d76558286cd18a54a5add2', // заглушка первого этапа
+            'fe1262991610c67259db925d95247367501f2333', // 13.10.2026: 22 номера, King Size, завтраки
+        ],
+        'kontakty' => [
+            '57cfa3a4987d8497bfbfe8a3ca9b9bacd22e3f42', // заглушка «подтвердить у модератора»
+        ],
+        'slavyanka' => [
+            '5f9604f4292199a68341d6bef439818213484d54', // заглушка с ценой «по ТЗ»
+        ],
     ];
-    $rooms = pages_seed()['nomera'];
-    $current = $pdo->query("SELECT body FROM page_content WHERE slug = 'nomera'")->fetchColumn();
-    if (!is_string($current) || !in_array(sha1($current), $previousSeeds, true)) {
-        return;
+    $seeds = pages_seed();
+    $select = $pdo->prepare('SELECT body FROM page_content WHERE slug = ?');
+    $update = $pdo->prepare('UPDATE page_content SET title = ?, description = ?, h1 = ?, intro = ?, body = ?, updated_at = ? WHERE slug = ?');
+    foreach ($previousSeeds as $slug => $hashes) {
+        $select->execute([$slug]);
+        $current = $select->fetchColumn();
+        if (!is_string($current) || !in_array(sha1($current), $hashes, true)) {
+            continue;
+        }
+        $page = $seeds[$slug];
+        $update->execute([$page['title'], $page['description'], $page['h1'], $page['intro'], $page['body'], date(DATE_ATOM), $slug]);
     }
-    $stmt = $pdo->prepare('UPDATE page_content SET title = ?, description = ?, h1 = ?, intro = ?, body = ?, updated_at = ? WHERE slug = ?');
-    $stmt->execute([$rooms['title'], $rooms['description'], $rooms['h1'], $rooms['intro'], $rooms['body'], date(DATE_ATOM), 'nomera']);
 }
 
 function pages_seed(): array
