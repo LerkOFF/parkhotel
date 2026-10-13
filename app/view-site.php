@@ -33,7 +33,6 @@ $pageGallery = match ($slug) {
         ['/assets/images/room-robes.webp', 'Халаты в шкафу номера'],
         ['/assets/images/room-bath.webp', 'Санузел номера'],
         ['/assets/images/room-shower.webp', 'Душ и дозаторы с шампунем и гелем'],
-        ['/assets/images/breakfast-menu.webp', 'Завтраки на выбор'],
     ],
     'nomer-s-detskoy-krovatkoy' => [
         ['/assets/images/room-robes.webp', 'Халаты в шкафу номера'],
@@ -69,6 +68,12 @@ $pageGallery = match ($slug) {
     ],
     default => [],
 };
+$bodyHtml = sanitize_content_html((string) ($page['body'] ?? ''));
+$bodyTail = '';
+if ($slug === 'nomera' && ($cut = strpos($bodyHtml, '<h2>Завтраки на выбор</h2>')) !== false) {
+    $bodyTail = substr($bodyHtml, $cut);
+    $bodyHtml = substr($bodyHtml, 0, $cut);
+}
 $requestType = match ($slug) {
     'nomera' => 'Бронирование номера',
     'nomer-s-detskoy-krovatkoy' => 'Номер с детской кроваткой',
@@ -176,13 +181,19 @@ $requestType = match ($slug) {
         <figure><img src="<?= $serviceImage ?>" alt="<?= e($serviceAlt) ?>" width="1280" height="960"></figure>
     </section>
     <?php if ($pageGallery): ?>
-    <section class="photo-strip<?= count($pageGallery) % 3 === 0 ? ' photo-strip-thirds' : '' ?>" aria-label="Фотографии раздела">
+    <section class="photo-strip<?= count($pageGallery) % 3 === 0 ? ' photo-strip-thirds' : '' ?><?= count($pageGallery) === 5 ? ' photo-strip-fives' : '' ?>" aria-label="Фотографии раздела">
         <?php foreach ($pageGallery as [$src, $alt]): ?>
             <figure><img src="<?= $src ?>" alt="<?= e($alt) ?>" loading="lazy"<?= str_contains($src, 'breakfast') ? ' class="photo-doc"' : '' ?>></figure>
         <?php endforeach; ?>
     </section>
     <?php endif; ?>
-    <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= sanitize_content_html($page['body']) ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
+    <section class="content-section section<?= $bodyTail !== '' ? ' content-split' : '' ?>"><div><h2>Главное</h2><div class="rich-content"><?= $bodyHtml ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
+    <?php if ($bodyTail !== ''): ?>
+    <section class="content-section content-continued section">
+        <div><div class="rich-content"><?= $bodyTail ?></div></div>
+        <figure class="menu-photo"><img src="/assets/images/breakfast-menu.webp" alt="Меню завтраков на выбор" width="898" height="1280" loading="lazy"></figure>
+    </section>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?php if (!$isDocument): ?>
