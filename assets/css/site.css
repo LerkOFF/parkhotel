@@ -147,6 +147,8 @@ figcaption { margin-top: 10px; color: var(--muted); font-size: 12px; }
 .wide { grid-column: 1 / -1; }
 .consent { grid-template-columns: auto 1fr !important; align-items: start; font-weight: 500 !important; }
 .consent input { width: 18px; height: 18px; accent-color: var(--accent); }
+.consent a { color: var(--accent); text-underline-offset: 3px; }
+.consent a:hover { color: var(--accent-hover); }
 .form-status { min-height: 1.5em; margin: 0; font-weight: 650; }
 .form-status.success { color: var(--success); }
 .form-status.error { color: var(--danger); }
