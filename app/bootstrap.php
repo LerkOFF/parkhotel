@@ -63,7 +63,17 @@ function db(): PDO
     $pdo->exec("UPDATE requests SET status = 'cancelled' WHERE status = 'canceled'");
 
     seed_pages($pdo);
+    migrate_rooms_content($pdo);
     return $pdo;
+}
+
+/** Обновляет страницу номеров до данных заказчика (22 номера, King Size, завтраки), если текст ещё исходный. Правки из админки не затирает. */
+function migrate_rooms_content(PDO $pdo): void
+{
+    $initialBody = 'В каждом номере есть всё необходимое для отдыха после дороги или рабочего дня. Актуальные категории, оснащение и цены дополнит администратор.';
+    $rooms = pages_seed()['nomera'];
+    $stmt = $pdo->prepare('UPDATE page_content SET title = ?, description = ?, h1 = ?, intro = ?, body = ?, updated_at = ? WHERE slug = ? AND body = ?');
+    $stmt->execute([$rooms['title'], $rooms['description'], $rooms['h1'], $rooms['intro'], $rooms['body'], date(DATE_ATOM), 'nomera', $initialBody]);
 }
 
 function pages_seed(): array

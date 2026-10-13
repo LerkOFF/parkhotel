@@ -7,7 +7,7 @@
 ## Запуск
 
 ```bash
-cd /Users/lerk/work/parkhotelvp
+cd /Users/lerk/work/php/parkhotelvp
 PARKHOTEL_ADMIN_PASSWORD='смените-пароль' php -S 127.0.0.1:8080 router.php
 ```
 
