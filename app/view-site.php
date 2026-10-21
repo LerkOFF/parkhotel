@@ -69,6 +69,11 @@ $pageGallery = match ($slug) {
     default => [],
 };
 $bodyHtml = sanitize_content_html((string) ($page['body'] ?? ''));
+$bodyTail = '';
+if ($slug === 'nomera' && ($cut = strpos($bodyHtml, '<h2>Завтраки на выбор</h2>')) !== false) {
+    $bodyTail = substr($bodyHtml, $cut);
+    $bodyHtml = substr($bodyHtml, 0, $cut);
+}
 $requestType = match ($slug) {
     'nomera' => 'Бронирование номера',
     'nomer-s-detskoy-krovatkoy' => 'Номер с детской кроваткой',
@@ -182,11 +187,11 @@ $requestType = match ($slug) {
         <?php endforeach; ?>
     </section>
     <?php endif; ?>
-    <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= $bodyHtml ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
-    <?php if ($slug === 'nomera'): ?>
-    <section class="content-section content-menu section">
-        <div><h2>Завтраки на выбор</h2><p>Завтрак на выбор входит в проживание.</p></div>
-        <figure class="menu-photo"><img src="/assets/images/breakfast-menu.webp" alt="Меню завтраков на выбор: завтрак №1, №2 и №3" width="898" height="1280" loading="lazy"></figure>
+    <section class="content-section section<?= $bodyTail !== '' ? ' content-split' : '' ?>"><div><h2>Главное</h2><div class="rich-content"><?= $bodyHtml ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
+    <?php if ($bodyTail !== ''): ?>
+    <section class="content-section content-continued section">
+        <div><div class="rich-content"><?= $bodyTail ?></div></div>
+        <figure class="menu-photo"><img src="/assets/images/breakfast-menu.webp" alt="Меню завтраков на выбор" width="898" height="1280" loading="lazy"></figure>
     </section>
     <?php endif; ?>
 <?php endif; ?>
