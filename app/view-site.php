@@ -99,8 +99,13 @@ $requestType = match ($slug) {
         'address' => ['@type' => 'PostalAddress', 'streetAddress' => 'ул. Кирова, 2А', 'addressLocality' => 'Вятские Поляны', 'addressRegion' => 'Кировская область'],
         'telephone' => '+7 (83334) 6-11-29', 'url' => 'https://parkhotelvp.ru',
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>
+    <script>
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+        ym(113716345, "init", {clickmap: true, trackLinks: true, accurateTrackBounce: true});
+    </script>
 </head>
 <body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113716345" style="position:absolute;left:-9999px" alt=""></div></noscript>
 <div class="topbar"><div class="topbar-inner"><span>Вятские Поляны, ул. Кирова, 2А</span><a href="mailto:parkhotelvp@yandex.ru">parkhotelvp@yandex.ru</a></div></div>
 <header class="site-header">
     <a class="brand" href="/" aria-label="Парк-Отель, главная">
@@ -222,7 +227,7 @@ $requestType = match ($slug) {
     </div>
 </footer>
 <div class="cookie-banner" role="region" aria-label="Файлы cookie" hidden>
-    <p>Сайт использует файлы cookie, чтобы работали формы заявок. Рекламу и аналитику мы не подключаем. <a href="/politika-cookie/">Подробнее</a></p>
+    <p>Сайт использует файлы cookie: технические, чтобы работали формы заявок, и Яндекс Метрику для статистики посещаемости. Рекламу мы не подключаем. <a href="/politika-cookie/">Подробнее</a></p>
     <button type="button" class="button cookie-ok">Понятно</button>
 </div>
 <script src="/assets/js/site.js" defer></script>

@@ -82,6 +82,12 @@ function migrate_seed_content(PDO $pdo): void
         'kontakty' => [
             '57cfa3a4987d8497bfbfe8a3ca9b9bacd22e3f42', // заглушка «подтвердить у модератора»
         ],
+        'politika-cookie' => [
+            'c79ed50fb22e3d7cd1a66ff9234a4c118c298ae0', // до подключения Яндекс Метрики
+        ],
+        'politika-konfidencialnosti' => [
+            'c937ccf183cd37635e29e197afdfd9fd51abf79e', // до подключения Яндекс Метрики
+        ],
         'slavyanka' => [
             '5f9604f4292199a68341d6bef439818213484d54', // заглушка с ценой «по ТЗ»
         ],
