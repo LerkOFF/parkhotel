@@ -123,6 +123,9 @@ figcaption { margin-top: 10px; color: var(--muted); font-size: 12px; }
 .rich-content figure { margin:30px 0; }.rich-content figcaption { font-size:12px; }
 .content-section aside { padding: 30px; border-radius: var(--radius); background: var(--surface); align-self: start; }
 .content-section aside p { color: var(--muted); }
+.content-section.content-menu { padding-top: 0; }
+.menu-photo { margin: 0; align-self: start; }
+.menu-photo img { max-width: 460px; border-radius: var(--radius); }
 .content-section h2, .section-heading h2, .request-section > div h2 { margin-bottom: clamp(22px, 3vw, 36px); }
 .content-section aside .actions { gap: 12px; }
 

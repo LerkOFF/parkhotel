@@ -183,6 +183,12 @@ $requestType = match ($slug) {
     </section>
     <?php endif; ?>
     <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= $bodyHtml ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
+    <?php if ($slug === 'nomera'): ?>
+    <section class="content-section content-menu section">
+        <div><h2>Завтраки на выбор</h2><p>Завтрак на выбор входит в проживание.</p></div>
+        <figure class="menu-photo"><img src="/assets/images/breakfast-menu.webp" alt="Меню завтраков на выбор: завтрак №1, №2 и №3" width="898" height="1280" loading="lazy"></figure>
+    </section>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?php if (!$isDocument): ?>
