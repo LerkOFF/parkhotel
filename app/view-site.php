@@ -126,10 +126,10 @@ $requestType = match ($slug) {
     </section>
 
     <section class="facts" aria-label="Преимущества">
-        <div><strong>22</strong><span>номеров</span></div>
-        <div><strong>Включён</strong><span>завтрак</span></div>
-        <div><strong>На месте</strong><span>парковка</span></div>
-        <div><strong>Рядом</strong><span>городской парк</span></div>
+        <div><strong>Номеров</strong><span>22</span></div>
+        <div><strong>Завтрак</strong><span>включён</span></div>
+        <div><strong>Парковка</strong><span>на месте</span></div>
+        <div><strong>Городской парк</strong><span>рядом</span></div>
     </section>
 
     <section class="services section">
