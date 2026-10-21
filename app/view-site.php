@@ -69,11 +69,6 @@ $pageGallery = match ($slug) {
     default => [],
 };
 $bodyHtml = sanitize_content_html((string) ($page['body'] ?? ''));
-$bodyTail = '';
-if ($slug === 'nomera' && ($cut = strpos($bodyHtml, '<h2>Завтраки на выбор</h2>')) !== false) {
-    $bodyTail = substr($bodyHtml, $cut);
-    $bodyHtml = substr($bodyHtml, 0, $cut);
-}
 $requestType = match ($slug) {
     'nomera' => 'Бронирование номера',
     'nomer-s-detskoy-krovatkoy' => 'Номер с детской кроваткой',
@@ -101,7 +96,7 @@ $requestType = match ($slug) {
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>
 </head>
 <body>
-<div class="topbar"><div class="topbar-inner"><span>Вятские Поляны, ул. Кирова, 2А</span><a href="mailto:ParkHotelVP@yandex.ru">ParkHotelVP@yandex.ru</a></div></div>
+<div class="topbar"><div class="topbar-inner"><span>Вятские Поляны, ул. Кирова, 2А</span><a href="mailto:parkhotelvp@yandex.ru">parkhotelvp@yandex.ru</a></div></div>
 <header class="site-header">
     <a class="brand" href="/" aria-label="Парк-Отель, главная">
         <img class="brand-mark" src="/assets/images/logo-mark.png" alt="" width="256" height="224"><span>Парк-Отель<small>Вятские Поляны</small></span>
@@ -187,13 +182,7 @@ $requestType = match ($slug) {
         <?php endforeach; ?>
     </section>
     <?php endif; ?>
-    <section class="content-section section<?= $bodyTail !== '' ? ' content-split' : '' ?>"><div><h2>Главное</h2><div class="rich-content"><?= $bodyHtml ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
-    <?php if ($bodyTail !== ''): ?>
-    <section class="content-section content-continued section">
-        <div><div class="rich-content"><?= $bodyTail ?></div></div>
-        <figure class="menu-photo"><img src="/assets/images/breakfast-menu.webp" alt="Меню завтраков на выбор" width="898" height="1280" loading="lazy"></figure>
-    </section>
-    <?php endif; ?>
+    <section class="content-section section"><div><h2>Главное</h2><div class="rich-content"><?= $bodyHtml ?></div></div><aside><strong>Уточнить у администратора</strong><p>Свободные даты, актуальную стоимость и детали услуги.</p><div class="actions"><a class="button" href="#request">Оставить заявку</a><a class="button button-outline" href="tel:+78333461129">Позвонить</a></div></aside></section>
 <?php endif; ?>
 
 <?php if (!$isDocument): ?>
@@ -214,7 +203,7 @@ $requestType = match ($slug) {
 
 <footer>
     <div><a class="brand footer-brand" href="/"><img class="brand-mark" src="/assets/images/logo-mark.png" alt="" width="256" height="224"><span>Парк-Отель<small>Вятские Поляны</small></span></a><p>Отдых, здоровье и события рядом с городским парком.</p></div>
-    <div><strong>Контакты</strong><p>Кировская область<br>Вятские Поляны, ул. Кирова, 2А<br><a href="tel:+78333461129">+7 (83334) 6-11-29</a><br><a href="mailto:ParkHotelVP@yandex.ru">ParkHotelVP@yandex.ru</a></p></div>
+    <div><strong>Контакты</strong><p>Кировская область<br>Вятские Поляны, ул. Кирова, 2А<br><a href="tel:+78333461129">+7 (83334) 6-11-29</a><br><a href="mailto:parkhotelvp@yandex.ru">parkhotelvp@yandex.ru</a></p></div>
     <div class="footer-menu"><strong>Разделы</strong><p><a href="/nomera/">Номера</a><br><a href="/nomer-s-detskoy-krovatkoy/">Номер с детской кроваткой</a><br><a href="/basseyn/">Бассейн</a><br><a href="/sauna-banya/">Баня и сауна</a><br><a href="/slavyanka/">Славянка</a><br><a href="/banketnyy-zal/">Банкетный зал</a><br><a href="/pominalnye-obedy/">Поминальные обеды</a><br><a href="/arenda/">Аренда</a><br><a href="/o-nas/">О нас</a><br><a href="/ryadom-s-otelem/">Что рядом</a><br><a href="/kontakty/">Контакты</a></p></div>
     <div class="footer-legal">
         <p>ООО «Санаторий-профилакторий «Вятская здравница», ИНН 4307018485, ОГРН 1154307000320</p>

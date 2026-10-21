@@ -97,6 +97,8 @@ function migrate_seed_content(PDO $pdo): void
         $page = $seeds[$slug];
         $update->execute([$page['title'], $page['description'], $page['h1'], $page['intro'], $page['body'], date(DATE_ATOM), $slug]);
     }
+    // 21.10.2026: почту везде пишем строчными, в уже заведённых страницах заменяем адрес точечно, остальной текст не трогаем
+    $pdo->exec("UPDATE page_content SET body = REPLACE(body, 'ParkHotelVP@yandex.ru', 'parkhotelvp@yandex.ru') WHERE body GLOB '*ParkHotelVP@yandex.ru*'");
 }
 
 function pages_seed(): array

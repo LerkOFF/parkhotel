@@ -46,7 +46,7 @@ if (cookieBanner && !cookieSeen) {
   });
 }
 
-const zoomables = [...document.querySelectorAll('.photo-strip img, .inner-hero figure img, .rich-content img, .menu-photo img')];
+const zoomables = [...document.querySelectorAll('.photo-strip img, .inner-hero figure img, .rich-content img')];
 if (zoomables.length && typeof HTMLDialogElement === 'function') {
   const box = document.createElement('dialog');
   box.className = 'lightbox';
