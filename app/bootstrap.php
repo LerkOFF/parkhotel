@@ -62,6 +62,10 @@ function db(): PDO
     $pdo->exec("UPDATE requests SET status = 'confirmed' WHERE status IN ('working', 'done')");
     $pdo->exec("UPDATE requests SET status = 'cancelled' WHERE status = 'canceled'");
 
+    // Адрес заказчика для заявок: ставим один раз, пока ключа нет. Позднюю правку или очистку из админки не трогаем.
+    $pdo->prepare('INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES (?, ?, ?)')
+        ->execute(['notify_email', 'ParkHotelVP@yandex.ru', date(DATE_ATOM)]);
+
     seed_pages($pdo);
     migrate_seed_content($pdo);
     return $pdo;
