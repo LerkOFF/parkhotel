@@ -95,6 +95,12 @@ function migrate_seed_content(PDO $pdo): void
         'slavyanka' => [
             '5f9604f4292199a68341d6bef439818213484d54', // заглушка с ценой «по ТЗ»
         ],
+        'basseyn' => [
+            '646f0a36fd4cfbd4654c2bbd17a40346f4b48e01', // заглушка «стоимость разместит администратор»
+        ],
+        'sauna-banya' => [
+            '7e19a49d3d365bc655711299216359d30df4928c', // заглушка «стоимость уточняйте»
+        ],
     ];
     $seeds = pages_seed();
     $select = $pdo->prepare('SELECT body FROM page_content WHERE slug = ?');
@@ -212,7 +218,7 @@ function sanitize_content_html(string $html): string
         return '';
     }
 
-    $allowedTags = ['p', 'br', 'h2', 'h3', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'figure', 'figcaption'];
+    $allowedTags = ['p', 'br', 'h2', 'h3', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'figure', 'figcaption', 'table', 'thead', 'tbody', 'tr', 'th', 'td'];
     $document = new DOMDocument('1.0', 'UTF-8');
     libxml_use_internal_errors(true);
     $document->loadHTML('<?xml encoding="UTF-8"><div id="content-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
@@ -248,7 +254,8 @@ function sanitize_content_html(string $html): string
 
             foreach (iterator_to_array($child->attributes) as $attribute) {
                 $allowed = ($tag === 'a' && in_array($attribute->name, ['href', 'target', 'rel'], true))
-                    || ($tag === 'img' && in_array($attribute->name, ['src', 'alt'], true));
+                    || ($tag === 'img' && in_array($attribute->name, ['src', 'alt'], true))
+                    || (in_array($tag, ['th', 'td'], true) && in_array($attribute->name, ['colspan', 'rowspan'], true));
                 if (!$allowed) {
                     $child->removeAttribute($attribute->name);
                 }
