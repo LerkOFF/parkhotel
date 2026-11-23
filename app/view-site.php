@@ -224,6 +224,7 @@ $requestType = match ($slug) {
     <div class="footer-legal">
         <p>ООО «Санаторий-профилакторий «Вятская здравница», ИНН 4307018485, ОГРН 1154307000320</p>
         <p><a href="/politika-konfidencialnosti/">Политика обработки персональных данных</a> · <a href="/soglasie-na-obrabotku-pd/">Согласие на обработку данных</a> · <a href="/politika-cookie/">Файлы cookie</a></p>
+        <p class="footer-credit">Разработка и продвижение <a href="https://tabson.ru" target="_blank" rel="noopener">tabson.ru</a></p>
     </div>
 </footer>
 <div class="cookie-banner" role="region" aria-label="Файлы cookie" hidden>
